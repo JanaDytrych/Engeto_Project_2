@@ -1,22 +1,15 @@
 import random
 
-oddelovac = "-" * 60
-print(f"Hello there!", "I've generated a random 4 digit number for you.", oddelovac, sep='\n')
-
-input_tries = input("How many tries do you wanna get? (in range 1-30): ")
-while True:
-    if not str(input_tries).isdigit():
-        input_tries = input("That is not a number, please try again: ")
-    else:
-        if int(input_tries) not in range(1, 31):
-            input_tries = input("This is out of range, let's try again: ")
+def get_me_input_tries():
+    tries = input("How many tries do you wanna get? (in range 1-30): ")
+    while True:
+        if not str(tries).isdigit():
+            tries = input("That is not a number, please try again: ")
         else:
-            print(oddelovac)
-            break
-
-print(f"""Let's play bulls and cows and start the game!
-You have {input_tries} tries and I wish you a good luck.
-{oddelovac}""")
+            if int(tries) not in range(1, 31):
+                tries = input("This is out of range, let's try again: ")
+            else:
+                return tries
 
 def no_duplicate(num):
     if len(str(num)) == len(set(str(num))):
@@ -55,39 +48,43 @@ def bulls_cows_game(random, player):
                 bull_cow[1] += 1
     return bull_cow
 
-play_game = True
-random_number = generate_number()
-actual_tries = 0
-input_tries = int(input_tries)
+def main():
+    oddelovac = "-" * 60
+    print(f"Hello there!", "I've generated a random 4 digit number for you.", oddelovac, sep='\n')
+    input_tries = int(get_me_input_tries())
+    play_game = True
+    random_number = generate_number()
+    actual_tries = 0
+    bull_string = ""
+    cow_string = ""
 
-bull_string = ""
-cow_string = ""
+    while play_game and input_tries > 0:
+        # print("random number is ", random_number)
+        player_guess = str(input("Enter a number: "))
+        if player_input_check(player_guess) == False:
+            continue
+        print(f">>> {player_guess}")
+        bull_cows = bulls_cows_game(random_number, player_guess)
+        if bull_cows[0] == 1:
+            bull_string = "bull"
+        else:
+            bull_string = "bulls"
 
-while play_game and input_tries > 0:
-    # print("random number is ", random_number)
-    player_guess = str(input("Enter a number: "))
+        if bull_cows[1] == 1:
+            cow_string = "cow"
+        else:
+            cow_string = "cows"
+        print(f"{bull_cows[0]} {bull_string}, {bull_cows[1]} {cow_string}")
 
-    if player_input_check(player_guess) == False:
-        continue
-    print(f">>> {player_guess}")
-    bull_cows = bulls_cows_game(random_number, player_guess)
-    if bull_cows[0] == 1:
-        bull_string = "bull"
+        input_tries -= 1
+        actual_tries += 1
+        if player_guess == random_number:
+            play_game = False
+            print(f"Congratulations! Your guess was right:) You needed {actual_tries} tries.")
+            exit()
     else:
-        bull_string = "bulls"
-
-    if bull_cows[1] == 1:
-        cow_string = "cow"
-    else:
-        cow_string = "cows"
-    print(f"{bull_cows[0]} {bull_string}, {bull_cows[1]} {cow_string}")
-
-    input_tries -= 1
-    actual_tries += 1
-    if player_guess == random_number:
+        print(f"You lost! The number you were looking for is {random_number}. Maybe next time:)")
         play_game = False
-        print(f"Congratulations! Your guess was right:) You needed {actual_tries} tries.")
-        exit()
-else:
-    print(f"You lost! The number you were looking for is {random_number}. Maybe next time:)")
-    play_game = False
+
+if __name__ == "__main__":
+    main()
